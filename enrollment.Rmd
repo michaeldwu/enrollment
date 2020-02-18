@@ -1,0 +1,39 @@
+---
+title: "enrollment"
+author: "Michael Wu"
+date: "2/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gt)
+library(glue)
+library(readxl)
+library(reprex)
+library(janitor)
+```
+
+
+```{r}
+x <- read_excel(path = 'class_enrollment_summary_by_term2.18.20.xlsx', skip = 3) %>%
+  clean_names() %>%
+  filter(course_department == "Government") %>%
+  arrange(desc(total)) %>%
+  slice(1:5) %>%
+  select(course_title, course_name, instructor_full_name, total) %>%
+  gt() %>%
+  tab_header(
+    title = "Top 5 Most Popular Gov Classes",
+    subtitle = glue::glue("You'll be amazed by #3!")
+  ) %>%
+  cols_label(
+    course_title = "Course Title",
+    course_name = "Course Name",
+    instructor_full_name = "Instructor",
+    total = "Enrolled"
+  )
+
+x
+```
