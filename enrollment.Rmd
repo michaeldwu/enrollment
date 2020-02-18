@@ -19,21 +19,13 @@ library(janitor)
 ```{r}
 x <- read_excel(path = 'class_enrollment_summary_by_term2.18.20.xlsx', skip = 3) %>%
   clean_names() %>%
-  filter(course_department == "Government") %>%
-  arrange(desc(total)) %>%
+  filter(! is.na(course_name)) %>% 
+  group_by(course_department) %>%
+  summarize(department_total = sum(total)) %>%
+  arrange(desc(department_total)) %>%
   slice(1:5) %>%
-  select(course_title, course_name, instructor_full_name, total) %>%
   gt() %>%
-  tab_header(
-    title = "Top 5 Most Popular Gov Classes",
-    subtitle = glue::glue("You'll be amazed by #3!")
-  ) %>%
-  cols_label(
-    course_title = "Course Title",
-    course_name = "Course Name",
-    instructor_full_name = "Instructor",
-    total = "Enrolled"
-  )
+  tab_header(title = "Top 5 Biggest Departments")
 
 x
 ```
